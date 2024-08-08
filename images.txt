@@ -5,3 +5,7 @@ minio/minio
 #xhofe/alist:latest
 #支持指定架构
 #--platform=linux/arm64 xiaoyaliu/alist
+nacos
+mysql
+mongodb
+redis
