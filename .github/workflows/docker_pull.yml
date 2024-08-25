@@ -1,0 +1,28 @@
+name: Daily Nginx Pull and Push
+
+on:
+  schedule:
+    - cron: '0 18 * * *'  # 每天下午 6 点执行
+
+jobs:
+  daily-nginx-pull-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Login to Alibaba Cloud Container Service
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ALIYUN_REGISTRY  }}  # 替换为您的阿里云镜像仓库地址
+        username: ${{ secrets.ALIYUN_REGISTRY_USER  }}  # 替换为您的阿里云账号
+        password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}  # 替换为您的阿里云密码
+
+    - name: Pull the latest Nginx image from Docker Hub
+      uses: docker/pull-and-push-action@v2
+      with:
+        docker-hub-repository: nginx
+        docker-hub-tag: latest
+        alibaba-cloud-repository: registry.cn-hangzhou.aliyuncs.com/liutao666  # 替换为您的阿里云镜像仓库名称
+        alibaba-cloud-tag: latest
