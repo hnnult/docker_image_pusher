@@ -1,8 +1,11 @@
 name: Pull Image then Push
 
+# on:
+#   push:
+#     branches: [ main ]  # 指定触发器仅在 main 分支上触发
 on:
-  push:
-    branches: [ main ]  # 指定触发器仅在 main 分支上触发
+  schedule:
+    - cron: '0 18 * * *' # 每天下午 6 点 UTC 执行
     
 jobs:
   daily-nginx-pull-push:
