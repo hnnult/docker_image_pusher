@@ -1,0 +1,31 @@
+name: Daily Nginx Pull and Push
+
+on:
+  schedule:
+    - cron: '0 19 * * *'  # 每天下午 7 点执行
+
+jobs:
+  daily-nginx-pull-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Login to Alibaba Cloud Container Service
+      uses: docker/login-action@v1
+      with:
+        registry: ${{ secrets.ALIYUN_REGISTRY }}  # 替换为您的阿里云镜像仓库地址
+        username: ${{ secrets.ALIYUN_REGISTRY_USER }}  # 替换为您的阿里云账号
+        password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}  # 替换为您的阿里云密码
+
+    - name: Read images from list
+      run: cat images.txt | xargs -n 1 -I {} echo "Pulling and pushing {} from Docker Hub to Alibaba Cloud Container Service"
+
+    - name: Pull and push images from list
+      run: |
+        for image in $(cat images.txt); do
+          docker pull $image
+          docker tag $image registry.cn-hangzhou.aliyuncs.com/liutao666/$image
+          docker push registry.cn-hangzhou.aliyuncs.com/liutao666/$image
+        done
