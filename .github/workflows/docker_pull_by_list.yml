@@ -1,9 +1,9 @@
-name: Daily Nginx Pull and Push
+name: Pull Image then Push
 
 on:
-  schedule:
-    - cron: '0 19 * * *'  # 每天下午 7 点执行
-
+  push:
+    branches: [ main ]  # 指定触发器仅在 main 分支上触发
+    
 jobs:
   daily-nginx-pull-push:
     runs-on: ubuntu-latest
@@ -20,11 +20,11 @@ jobs:
         password: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}  # 替换为您的阿里云密码
 
     - name: Read images from list
-      run: cat images.txt | xargs -n 1 -I {} echo "Pulling and pushing {} from Docker Hub to Alibaba Cloud Container Service"
+      run: cat my_images.txt | xargs -n 1 -I {} echo "Pulling and pushing {} from Docker Hub to Alibaba Cloud Container Service"
 
     - name: Pull and push images from list
       run: |
-        for image in $(cat images.txt); do
+        for image in $(cat my_images.txt); do
           docker pull $image
           docker tag $image registry.cn-hangzhou.aliyuncs.com/liutao666/$image
           docker push registry.cn-hangzhou.aliyuncs.com/liutao666/$image
